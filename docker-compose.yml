@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  postgres-compose:
+    container_name: postgres_container_2
+    image: postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports: 
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - asx-network  
+
+  rails-app:
+    container_name: rails_app_container
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres-compose
+    networks:
+      - asx-network  
+
+volumes:
+  postgres-data:
+
+networks:
+  asx-network: 
